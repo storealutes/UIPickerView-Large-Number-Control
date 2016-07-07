@@ -9,21 +9,18 @@
 import UIKit
 
 
-class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UIGestureRecognizerDelegate {
     
     
     @IBOutlet weak var myPicker: UIPickerView?
 
     override func viewDidLoad() {
-        let myArray = Array(0...1000)
-        print(myArray);
+        
+        let pickerTap : UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.tapPicker))
+        myPicker?.addGestureRecognizer(pickerTap)
+        pickerTap.delegate = self
+        
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -38,6 +35,15 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
        return String(row)
     }
     
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    func tapPicker() {
+        print("Tapped")
+        myPicker?.delegate?.pickerView!(myPicker!, didSelectRow: 0, inComponent: 0);
+    }
+    
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         
         //Calculate value of digits
@@ -47,7 +53,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         total += pickerView.selectedRow(inComponent: 2) * 10
         
         //Disable numbers above Maxiumum value
-        let max = 10
+        let max = 2589
         if (total > max) {
             total = max
             let hundreds : Int = max - (Int(max/1000)*1000)
@@ -58,10 +64,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             pickerView.selectRow(tens%10, inComponent: 3, animated: true)
             print(String(format:"Maximum Value of %i Exceeded",max))
         }
-        
         print(String(format:"Value: %i",total))
-        
     }
-
 }
 
